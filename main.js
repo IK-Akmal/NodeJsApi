@@ -99,7 +99,36 @@ methods.set('/posts.edit', (request, response) => {
     response.end(JSON.stringify(posts[indexPost]));
 });
 
-// methods.set('/posts.delete', (request, response) => { });
+methods.set('/posts.delete', (request, response) => {
+
+    const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
+
+    if (!searchParams.has('id')) {
+        response.writeHead(statusBadRequest);
+        response.end();
+        return;
+    }
+    const id = Number(searchParams.get('id'));
+
+    if (Number.isNaN(id)) {
+        response.writeHead(statusBadRequest);
+        response.end();
+        return;
+    }
+
+    const indexPost = posts.findIndex(post => post.id === id);
+
+    if (indexPost === -1) {
+        response.writeHead(statusNotFound);
+        response.end();
+        return;
+    }
+
+    posts = posts.slice(indexPost, 1);
+    response.writeHead(statusOk,{'Content-Type': "application/json"});
+    response.end(JSON.stringify(posts[indexPost]));
+
+});
 
 const server = http.createServer((request, response) => {
 
