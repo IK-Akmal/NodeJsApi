@@ -18,7 +18,34 @@ methods.set('/posts.get', (request, response) => {
     response.end(JSON.stringify(posts));
 });
 
-methods.set('/posts.getById', (request, response) => { });
+methods.set('/posts.getById', (request, response) => {
+
+    const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
+
+    if (!searchParams.has('id')) {
+        response.writeHead(statusBadRequest);
+        response.end();
+        return;
+    }
+    const id = Number(searchParams.get('id'));
+
+    if (Number.isNaN(id)) {
+        response.writeHead(statusBadRequest);
+        response.end();
+        return;
+    }
+
+    const post = posts.find(x => x.id === id);
+
+    if (!post) {
+        response.writeHead(statusNotFound);
+        response.end();
+        return;
+    }
+
+    response.writeHead(statusOk, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify(post));
+});
 
 methods.set('/posts.post', (request, response) => {
     const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
