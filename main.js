@@ -15,7 +15,7 @@ const methods = new Map();
 //Get post api
 methods.set('/posts.get', (request, response) => {
     response.writeHead(statusOk, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify(posts));
+    response.end(JSON.stringify(posts.filter(post => !post.removed)));
 });
 
 methods.set('/posts.getById', (request, response) => {
@@ -35,7 +35,7 @@ methods.set('/posts.getById', (request, response) => {
         return;
     }
 
-    const findPost = posts.find(post => post.id === id);
+    const findPost = posts.filter(post => !post.removed).find(post => post.id === id);
 
     if (!findPost) {
         response.writeHead(statusNotFound);
@@ -61,6 +61,7 @@ methods.set('/posts.post', (request, response) => {
         id: nextId++,
         content: content,
         created: Date.now(),
+        removed: false,
     };
 
     posts.unshift(post);
@@ -86,7 +87,7 @@ methods.set('/posts.edit', (request, response) => {
         return;
     }
 
-    const indexPost = posts.findIndex(post => post.id === id);
+    const indexPost = posts.filter(post => !post.removed).findIndex(post => post.id === id);
 
     if (indexPost === -1) {
         response.writeHead(statusNotFound);
@@ -116,19 +117,22 @@ methods.set('/posts.delete', (request, response) => {
         return;
     }
 
-    const indexPost = posts.findIndex(post => post.id === id);
+    const indexPost = posts.filter(post => !post.removed).findIndex(post => post.id === id);
 
     if (indexPost === -1) {
         response.writeHead(statusNotFound);
         response.end();
         return;
     }
-    const deletePost = posts.splice(indexPost, 1);
+
+    const deletePost = posts[indexPost];
+    posts[indexPost].removed = true;
 
     response.writeHead(statusOk, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify(...deletePost));
-
+    response.end(JSON.stringify(deletePost));
 });
+
+
 
 const server = http.createServer((request, response) => {
 
