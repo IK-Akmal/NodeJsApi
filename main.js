@@ -125,8 +125,8 @@ methods.set('/posts.delete', (request, response) => {
     }
     const deletePost = posts.splice(indexPost, 1);
 
-    response.writeHead(statusOk, { 'Content-Type': "application/json" });
-    response.end(JSON.stringify(deletePost));
+    response.writeHead(statusOk, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify(...deletePost));
 
 });
 
