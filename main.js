@@ -35,16 +35,16 @@ methods.set('/posts.getById', (request, response) => {
         return;
     }
 
-    const post = posts.find(x => x.id === id);
+    const findPost = posts.find(post => post.id === id);
 
-    if (!post) {
+    if (!findPost) {
         response.writeHead(statusNotFound);
         response.end();
         return;
     }
 
     response.writeHead(statusOk, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify(post));
+    response.end(JSON.stringify(findPost));
 });
 
 methods.set('/posts.post', (request, response) => {
@@ -68,9 +68,9 @@ methods.set('/posts.post', (request, response) => {
     response.end(JSON.stringify(post));
 });
 
-methods.set('/posts.edit', (request, response) => { });
+// methods.set('/posts.edit', (request, response) => { });
 
-methods.set('/posts.delete', (request, response) => { });
+// methods.set('/posts.delete', (request, response) => { });
 
 const server = http.createServer((request, response) => {
 
