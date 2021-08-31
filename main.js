@@ -88,7 +88,7 @@ methods.set('/posts.edit', (request, response) => {
 
     const indexPost = posts.findIndex(post => post.id === id);
 
-    if (!indexPost) {
+    if (indexPost === -1) {
         response.writeHead(statusNotFound);
         response.end();
         return;
